@@ -1,18 +1,53 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Expanding our Vision</title>
-    <link rel="stylesheet" href="/css/style.css">
-  </head>
-  <body>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/blog/">Blog</a>
-    </nav>
-    <h1>Expanding our Vision</h1>
-    <section>
-      <p><!-- wp:paragraph --></p>
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Expanding our Vision | Your awesome title</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Expanding our Vision" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This week I wanted to focus on improving the vision for CelesteBot. As noted in the last post, 10x10 vision worked fine but anything much bigger tanked the game&#39;s frame rate. I looked at what the mod was doing behind the scenes, and it turns out the method for building the bot&#39;s vision was checking for collisions in each tile every frame. Collisions are one of the most expensive calculations in games, so you definitely don&#39;t want to check for collisions this often. Most game content in Celeste is static, so I decided to try caching this information after collision detection was done. The difference was immediate and significant. Here are the frame rates for the game before and after caching: Before: 10x10: 60 FPS 12x12: 15 FPS 15x15: 2 FPS 20x20: 1 FPS 30x30: 1 FPS After: 10x10: 60 FPS 12x12: 60 FPS 15x15: 60 FPS 20x20: 60 FPS 30x30: 60 FPS Undoubtedly there will be some modifications needed in later levels for game entities that move, but this is entirely doable. I also noticed a bug not previously caught: the bot vision was only detecting generic &quot;entities&quot;. It should have been distinguishing wall tiles and spikes as different values within the matrix, but the code wasn&#39;t able to see SolidTiles or Spikes. I modified the entity fetching code a little to check what kind of entity was being collided with. It checks each entity for collisions, then chooses the colliding entity with highest priority. The priority is currently Entity &lt; Tile &lt; Spike. In addition to this modification, I removed the player from the bot&#39;s vision. The player is always at the center of vision, so there is no need to render them. This change revealed another bug: spikes were not being detected at all. The collision detection was being done with a single point at each tile. I decided to try checking collisions for collisions within a square the size of a tile, and suddenly spikes were detectable. I also made a minor performance improvement. Previously, the bot&#39;s vision was being rendered by a set of circles. This was inefficient and tanked the frame rate with large vision grids. I changed the circles into small squares, and now the frame rate is a steady 60 even with 30x30 vision. Finally, I decreased the death timer from 2.5 to 2.2 seconds. This appears to be fast enough that the player can&#39;t die again before the time has elapsed. Although, it may need to be changed for later levels. With all these changes in place, I ran NEAT overnight for 200 generations, a process that took about 12 hours. The results were interesting, but mostly unsuccessful. The main problem is that 30x30 = 900, which is a lot of inputs for NEAT to experiment with by iterating through them. It is good for the bot to be able to see this region, but it makes the bot take much longer to learn anything. The other problem was a bug present at 1:49:00. The mod failed to reset the level before running the next organism, resulting in an artificially high fitness for an organism that did not deserve it. NEAT then continued to cling to this type of species for the rest of the simulation, with poor results. I&#39;m still not sure why this occurred, I tested the death timer duration after this simulation and it reset properly every time. If this occurs again, I&#39;ll need to do a more thorough investigation. https://youtu.be/aVTlBXTexzM Now that the expanded vision is in place, it&#39;s time to think about how to get as much training time as possible for the bot. I would like to investigate methods of speeding up Celeste&#39;s physics. Another useful feature would be the ability to save and load the genome data so that sessions can be carried over between game launches. These will be the main focus of next week&#39;s work." />
+<meta property="og:description" content="This week I wanted to focus on improving the vision for CelesteBot. As noted in the last post, 10x10 vision worked fine but anything much bigger tanked the game&#39;s frame rate. I looked at what the mod was doing behind the scenes, and it turns out the method for building the bot&#39;s vision was checking for collisions in each tile every frame. Collisions are one of the most expensive calculations in games, so you definitely don&#39;t want to check for collisions this often. Most game content in Celeste is static, so I decided to try caching this information after collision detection was done. The difference was immediate and significant. Here are the frame rates for the game before and after caching: Before: 10x10: 60 FPS 12x12: 15 FPS 15x15: 2 FPS 20x20: 1 FPS 30x30: 1 FPS After: 10x10: 60 FPS 12x12: 60 FPS 15x15: 60 FPS 20x20: 60 FPS 30x30: 60 FPS Undoubtedly there will be some modifications needed in later levels for game entities that move, but this is entirely doable. I also noticed a bug not previously caught: the bot vision was only detecting generic &quot;entities&quot;. It should have been distinguishing wall tiles and spikes as different values within the matrix, but the code wasn&#39;t able to see SolidTiles or Spikes. I modified the entity fetching code a little to check what kind of entity was being collided with. It checks each entity for collisions, then chooses the colliding entity with highest priority. The priority is currently Entity &lt; Tile &lt; Spike. In addition to this modification, I removed the player from the bot&#39;s vision. The player is always at the center of vision, so there is no need to render them. This change revealed another bug: spikes were not being detected at all. The collision detection was being done with a single point at each tile. I decided to try checking collisions for collisions within a square the size of a tile, and suddenly spikes were detectable. I also made a minor performance improvement. Previously, the bot&#39;s vision was being rendered by a set of circles. This was inefficient and tanked the frame rate with large vision grids. I changed the circles into small squares, and now the frame rate is a steady 60 even with 30x30 vision. Finally, I decreased the death timer from 2.5 to 2.2 seconds. This appears to be fast enough that the player can&#39;t die again before the time has elapsed. Although, it may need to be changed for later levels. With all these changes in place, I ran NEAT overnight for 200 generations, a process that took about 12 hours. The results were interesting, but mostly unsuccessful. The main problem is that 30x30 = 900, which is a lot of inputs for NEAT to experiment with by iterating through them. It is good for the bot to be able to see this region, but it makes the bot take much longer to learn anything. The other problem was a bug present at 1:49:00. The mod failed to reset the level before running the next organism, resulting in an artificially high fitness for an organism that did not deserve it. NEAT then continued to cling to this type of species for the rest of the simulation, with poor results. I&#39;m still not sure why this occurred, I tested the death timer duration after this simulation and it reset properly every time. If this occurs again, I&#39;ll need to do a more thorough investigation. https://youtu.be/aVTlBXTexzM Now that the expanded vision is in place, it&#39;s time to think about how to get as much training time as possible for the bot. I would like to investigate methods of speeding up Celeste&#39;s physics. Another useful feature would be the ability to save and load the genome data so that sessions can be carried over between game launches. These will be the main focus of next week&#39;s work." />
+<link rel="canonical" href="/2019/03/17/expanding-our-vision/" />
+<meta property="og:url" content="/2019/03/17/expanding-our-vision/" />
+<meta property="og:site_name" content="Your awesome title" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-03-17T13:01:26-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Expanding our Vision" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","url":"/2019/03/17/expanding-our-vision/","dateModified":"2019-03-17T13:01:26-07:00","datePublished":"2019-03-17T13:01:26-07:00","headline":"Expanding our Vision","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/03/17/expanding-our-vision/"},"description":"This week I wanted to focus on improving the vision for CelesteBot. As noted in the last post, 10x10 vision worked fine but anything much bigger tanked the game&#39;s frame rate. I looked at what the mod was doing behind the scenes, and it turns out the method for building the bot&#39;s vision was checking for collisions in each tile every frame. Collisions are one of the most expensive calculations in games, so you definitely don&#39;t want to check for collisions this often. Most game content in Celeste is static, so I decided to try caching this information after collision detection was done. The difference was immediate and significant. Here are the frame rates for the game before and after caching: Before: 10x10: 60 FPS 12x12: 15 FPS 15x15: 2 FPS 20x20: 1 FPS 30x30: 1 FPS After: 10x10: 60 FPS 12x12: 60 FPS 15x15: 60 FPS 20x20: 60 FPS 30x30: 60 FPS Undoubtedly there will be some modifications needed in later levels for game entities that move, but this is entirely doable. I also noticed a bug not previously caught: the bot vision was only detecting generic &quot;entities&quot;. It should have been distinguishing wall tiles and spikes as different values within the matrix, but the code wasn&#39;t able to see SolidTiles or Spikes. I modified the entity fetching code a little to check what kind of entity was being collided with. It checks each entity for collisions, then chooses the colliding entity with highest priority. The priority is currently Entity &lt; Tile &lt; Spike. In addition to this modification, I removed the player from the bot&#39;s vision. The player is always at the center of vision, so there is no need to render them. This change revealed another bug: spikes were not being detected at all. The collision detection was being done with a single point at each tile. I decided to try checking collisions for collisions within a square the size of a tile, and suddenly spikes were detectable. I also made a minor performance improvement. Previously, the bot&#39;s vision was being rendered by a set of circles. This was inefficient and tanked the frame rate with large vision grids. I changed the circles into small squares, and now the frame rate is a steady 60 even with 30x30 vision. Finally, I decreased the death timer from 2.5 to 2.2 seconds. This appears to be fast enough that the player can&#39;t die again before the time has elapsed. Although, it may need to be changed for later levels. With all these changes in place, I ran NEAT overnight for 200 generations, a process that took about 12 hours. The results were interesting, but mostly unsuccessful. The main problem is that 30x30 = 900, which is a lot of inputs for NEAT to experiment with by iterating through them. It is good for the bot to be able to see this region, but it makes the bot take much longer to learn anything. The other problem was a bug present at 1:49:00. The mod failed to reset the level before running the next organism, resulting in an artificially high fitness for an organism that did not deserve it. NEAT then continued to cling to this type of species for the rest of the simulation, with poor results. I&#39;m still not sure why this occurred, I tested the death timer duration after this simulation and it reset properly every time. If this occurs again, I&#39;ll need to do a more thorough investigation. https://youtu.be/aVTlBXTexzM Now that the expanded vision is in place, it&#39;s time to think about how to get as much training time as possible for the bot. I would like to investigate methods of speeding up Celeste&#39;s physics. Another useful feature would be the ability to save and load the genome data so that sessions can be carried over between game launches. These will be the main focus of next week&#39;s work.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Your awesome title" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Your awesome title</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Expanding our Vision</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2019-03-17T13:01:26-07:00" itemprop="datePublished">Mar 17, 2019
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login"=>"bercribe", "email"=>"matoska.polar.waltz@gmail.com", "display_name"=>"mawz", "first_name"=>"", "last_name"=>""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!-- wp:paragraph --></p>
 <p>This week I wanted to focus on improving the vision for <a href="https://github.com/sc2ad/CelesteBot/tree/qlearning">CelesteBot</a>.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
@@ -69,9 +104,34 @@ https://youtu.be/aVTlBXTexzM
 <p>Now that the expanded vision is in place, it's time to think about how to get as much training time as possible for the bot. I would like to investigate methods of speeding up Celeste's physics. Another useful feature would be the ability to save and load the genome data so that sessions can be carried over between game launches. These will be the main focus of next week's work.</p>
 <p><!-- /wp:paragraph --></p>
 
-    </section>
-    <footer>
-      &copy; to me
-    </footer>
-  </body>
+  </div><a class="u-url" href="/2019/03/17/expanding-our-vision/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Your awesome title</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Your awesome title</li><li><a class="u-email" href="mailto:your-email@example.com">your-email@example.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/jekyll"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">jekyll</span></a></li><li><a href="https://www.twitter.com/jekyllrb"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">jekyllrb</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
 </html>

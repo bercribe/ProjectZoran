@@ -1,18 +1,53 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>MadelineAI 100</title>
-    <link rel="stylesheet" href="/css/style.css">
-  </head>
-  <body>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/blog/">Blog</a>
-    </nav>
-    <h1>MadelineAI 100</h1>
-    <section>
-      <p><!-- wp:paragraph --></p>
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>MadelineAI 100 | Your awesome title</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="MadelineAI 100" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Progress has been slow this week, it feels like learning new technologies takes longer than developing them sometimes. My goals for the week have been to find Celeste mirrors to the elements present in MarI/O, and begin developing a technical prototype. These elements included save states and a fitness metric. I wanted some kind of save state like functionality for my Celeste TASBot. I decided to investigate some existing tassing solutions to see how save states were handled. LibTAS actually does support save states for some modern titles including Celeste. However, it only runs on Linux and the save states can take several seconds to load, which is not ideal when hundreds of thousands of runs are required for machine learning training. CelesteTAS decided not to use save states at all when helping tassers develop their speed runs. Instead, it just plays the inputs back from the beginning of the level every time, relying on the fact that the game runs quickly and the levels are relatively short. In the end I decided I&#39;ll either have to abandon save state functionality in favor of resetting the bot at the start of each level, or implement it in a way similar to CelesteTAS. In Mario, the goal is very simple - move right. It is easy to formulate this goal to a machine in terms of a performance metric. In Celeste, the goal is not quite as simple. One approach is to track the maximum distance the bot has traveled toward the end of the level . Level 1-A is fairly linear, so this approach might be sufficient. Level 2-A, however, has 2 different cut scene triggers in different parts of the level. This requires backtracking, for which a simple performance metric would be inefficient, if not impossible. Another approach is to predetermine the bot&#39;s route from room to room, and leave the mechanics to the machine learning. However, this approach would miss out on any interesting discoveries the bot could make by travelling a different route. After discussing with a Celeste tasser and modder, I decided the metric should be based upon the maximum distance traveled to the next checkpoint in the level. In level 1-A, there is 1 checkpoint - the end of the level. In level 2-A there are 3 checkpoints - the cut scene triggers and the end of the level. I believe this approach will help define the bot&#39;s goals better without doing too much hard coding. This metric would of course factor in speed, favoring faster times to the same location. With these elements defined in abstract terms, it was time to begin developing MadelineAI (MAI). This would be a mod written in C# using Everest. Having no prior experience with mod development, I naively assumed writing mods was like writing games or other applications: it would have some main function that executed everything else. Everest mods are actually C# libraries, though, they are loaded when the application starts and function by hooking into existing game methods. Typical Everest mods need a Module and a ModuleSettings. The Module loads and unloads the methods used in the mod, and the ModuleSettings contains user facing options for the mod accessible in the main menu of Celeste. I was able to compile a mod and have it loaded by Everest, although it doesn&#39;t do much besides look good so far. The rest of my time was mostly spent examining the source code for CelesteTAS in an attempt to gleam some understanding of the Everest framework. My goals for for the coming week is to be able to supply input to the game and to fetch character and terrain information from the game via MAI. Follow up goals include building the NEAT infrastructure within MAI, or accessing the MarI/O LUA code from MAI." />
+<meta property="og:description" content="Progress has been slow this week, it feels like learning new technologies takes longer than developing them sometimes. My goals for the week have been to find Celeste mirrors to the elements present in MarI/O, and begin developing a technical prototype. These elements included save states and a fitness metric. I wanted some kind of save state like functionality for my Celeste TASBot. I decided to investigate some existing tassing solutions to see how save states were handled. LibTAS actually does support save states for some modern titles including Celeste. However, it only runs on Linux and the save states can take several seconds to load, which is not ideal when hundreds of thousands of runs are required for machine learning training. CelesteTAS decided not to use save states at all when helping tassers develop their speed runs. Instead, it just plays the inputs back from the beginning of the level every time, relying on the fact that the game runs quickly and the levels are relatively short. In the end I decided I&#39;ll either have to abandon save state functionality in favor of resetting the bot at the start of each level, or implement it in a way similar to CelesteTAS. In Mario, the goal is very simple - move right. It is easy to formulate this goal to a machine in terms of a performance metric. In Celeste, the goal is not quite as simple. One approach is to track the maximum distance the bot has traveled toward the end of the level . Level 1-A is fairly linear, so this approach might be sufficient. Level 2-A, however, has 2 different cut scene triggers in different parts of the level. This requires backtracking, for which a simple performance metric would be inefficient, if not impossible. Another approach is to predetermine the bot&#39;s route from room to room, and leave the mechanics to the machine learning. However, this approach would miss out on any interesting discoveries the bot could make by travelling a different route. After discussing with a Celeste tasser and modder, I decided the metric should be based upon the maximum distance traveled to the next checkpoint in the level. In level 1-A, there is 1 checkpoint - the end of the level. In level 2-A there are 3 checkpoints - the cut scene triggers and the end of the level. I believe this approach will help define the bot&#39;s goals better without doing too much hard coding. This metric would of course factor in speed, favoring faster times to the same location. With these elements defined in abstract terms, it was time to begin developing MadelineAI (MAI). This would be a mod written in C# using Everest. Having no prior experience with mod development, I naively assumed writing mods was like writing games or other applications: it would have some main function that executed everything else. Everest mods are actually C# libraries, though, they are loaded when the application starts and function by hooking into existing game methods. Typical Everest mods need a Module and a ModuleSettings. The Module loads and unloads the methods used in the mod, and the ModuleSettings contains user facing options for the mod accessible in the main menu of Celeste. I was able to compile a mod and have it loaded by Everest, although it doesn&#39;t do much besides look good so far. The rest of my time was mostly spent examining the source code for CelesteTAS in an attempt to gleam some understanding of the Everest framework. My goals for for the coming week is to be able to supply input to the game and to fetch character and terrain information from the game via MAI. Follow up goals include building the NEAT infrastructure within MAI, or accessing the MarI/O LUA code from MAI." />
+<link rel="canonical" href="/2019/02/18/madelineai-100/" />
+<meta property="og:url" content="/2019/02/18/madelineai-100/" />
+<meta property="og:site_name" content="Your awesome title" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-02-18T20:40:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="MadelineAI 100" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","url":"/2019/02/18/madelineai-100/","dateModified":"2019-02-18T20:40:00-08:00","datePublished":"2019-02-18T20:40:00-08:00","headline":"MadelineAI 100","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/02/18/madelineai-100/"},"description":"Progress has been slow this week, it feels like learning new technologies takes longer than developing them sometimes. My goals for the week have been to find Celeste mirrors to the elements present in MarI/O, and begin developing a technical prototype. These elements included save states and a fitness metric. I wanted some kind of save state like functionality for my Celeste TASBot. I decided to investigate some existing tassing solutions to see how save states were handled. LibTAS actually does support save states for some modern titles including Celeste. However, it only runs on Linux and the save states can take several seconds to load, which is not ideal when hundreds of thousands of runs are required for machine learning training. CelesteTAS decided not to use save states at all when helping tassers develop their speed runs. Instead, it just plays the inputs back from the beginning of the level every time, relying on the fact that the game runs quickly and the levels are relatively short. In the end I decided I&#39;ll either have to abandon save state functionality in favor of resetting the bot at the start of each level, or implement it in a way similar to CelesteTAS. In Mario, the goal is very simple - move right. It is easy to formulate this goal to a machine in terms of a performance metric. In Celeste, the goal is not quite as simple. One approach is to track the maximum distance the bot has traveled toward the end of the level . Level 1-A is fairly linear, so this approach might be sufficient. Level 2-A, however, has 2 different cut scene triggers in different parts of the level. This requires backtracking, for which a simple performance metric would be inefficient, if not impossible. Another approach is to predetermine the bot&#39;s route from room to room, and leave the mechanics to the machine learning. However, this approach would miss out on any interesting discoveries the bot could make by travelling a different route. After discussing with a Celeste tasser and modder, I decided the metric should be based upon the maximum distance traveled to the next checkpoint in the level. In level 1-A, there is 1 checkpoint - the end of the level. In level 2-A there are 3 checkpoints - the cut scene triggers and the end of the level. I believe this approach will help define the bot&#39;s goals better without doing too much hard coding. This metric would of course factor in speed, favoring faster times to the same location. With these elements defined in abstract terms, it was time to begin developing MadelineAI (MAI). This would be a mod written in C# using Everest. Having no prior experience with mod development, I naively assumed writing mods was like writing games or other applications: it would have some main function that executed everything else. Everest mods are actually C# libraries, though, they are loaded when the application starts and function by hooking into existing game methods. Typical Everest mods need a Module and a ModuleSettings. The Module loads and unloads the methods used in the mod, and the ModuleSettings contains user facing options for the mod accessible in the main menu of Celeste. I was able to compile a mod and have it loaded by Everest, although it doesn&#39;t do much besides look good so far. The rest of my time was mostly spent examining the source code for CelesteTAS in an attempt to gleam some understanding of the Everest framework. My goals for for the coming week is to be able to supply input to the game and to fetch character and terrain information from the game via MAI. Follow up goals include building the NEAT infrastructure within MAI, or accessing the MarI/O LUA code from MAI.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Your awesome title" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Your awesome title</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">MadelineAI 100</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2019-02-18T20:40:00-08:00" itemprop="datePublished">Feb 18, 2019
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login"=>"bercribe", "email"=>"matoska.polar.waltz@gmail.com", "display_name"=>"mawz", "first_name"=>"", "last_name"=>""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!-- wp:paragraph --></p>
 <p>Progress has been slow this week, it feels like learning new technologies takes longer than developing them sometimes. My goals for the week have been to find Celeste mirrors to the elements present in <a href="https://www.youtube.com/watch?v=qv6UVOQ0F44">MarI/O</a>, and begin developing a technical prototype. These elements included save states and a fitness metric.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
@@ -31,9 +66,34 @@
 <p>The rest of my time was mostly spent examining the source code for CelesteTAS in an attempt to gleam some understanding of the Everest framework. My goals for for the coming week is to be able to supply input to the game and to fetch character and terrain information from the game via MAI. Follow up goals include building the NEAT infrastructure within MAI, or accessing the MarI/O LUA code from MAI.</p>
 <p><!-- /wp:paragraph --></p>
 
-    </section>
-    <footer>
-      &copy; to me
-    </footer>
-  </body>
+  </div><a class="u-url" href="/2019/02/18/madelineai-100/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Your awesome title</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Your awesome title</li><li><a class="u-email" href="mailto:your-email@example.com">your-email@example.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/jekyll"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">jekyll</span></a></li><li><a href="https://www.twitter.com/jekyllrb"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">jekyllrb</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
 </html>

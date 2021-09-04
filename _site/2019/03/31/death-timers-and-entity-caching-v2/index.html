@@ -1,18 +1,53 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Death Timers and Entity Caching v2</title>
-    <link rel="stylesheet" href="/css/style.css">
-  </head>
-  <body>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/blog/">Blog</a>
-    </nav>
-    <h1>Death Timers and Entity Caching v2</h1>
-    <section>
-      <p><!-- wp:paragraph --></p>
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Death Timers and Entity Caching v2 | Your awesome title</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Death Timers and Entity Caching v2" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This week I was mainly trying to finalize my changes, fix any remaining critical bugs, and get some machine learning done. I noticed that the player was occasionally still resetting incorrectly. I went through a few different possible solutions, and settled one that appears to be as reliable as possible. When the player dies, the death timer starts. As soon as the timer reaches 0, the player tries to reset the level. If the player doesn&#39;t have control of the character, as is the case when the player is dead or the game is already resetting, the game fails to reset silently. I changed the code so the player would remain motionless after dying, and couldn&#39;t suicide on spikes immediately, which took care of most instances of bad resets. The other bad resets were caused by a strange interaction between the other resetting mechanism. When the player hasn&#39;t made significant progress for 4 or more seconds, the mod resets the level. However, if the player dies within this span of time, it can cause the game to be reset more than once, or not at all. To fix this, I gave the death timer priority over the stuck timer. If the player has died and the death timer is running, the stuck timer will not reset the player. I have seen no instances of bad resets since these changes were made. Another problem I came across was present in the bot vision grid. I hadn&#39;t noticed it before, but entities sometimes weren&#39;t showing up in the grid at all due to the way the caching was done and the way Celeste loads entities. Most entities, including spikes, springs, and moving blocks, are not loaded into the game engine until the player is in the same room. However, the grid was checking for collisions in the next room before the player had entered in some cases and caching it in a grid that never updated, causing the bot to be blind to these entities forever. To fix this, I revamped my caching system slightly. It still caches tile locations permanently, but it caches entity locations once every frame. After that, I came across a silly off by one grid error caused by a difference in real coordinate to tile coordinate translations translations when working with positive and negative numbers. To fix this, I inserted a Math.Floor before casting the coordinate to an int. After these changes, the grid looked great and updated flawlessly for moving entities. My final modification this week related to checkpoints. Previously, I had thought that the machine learning I was doing was using checkpoints in each room. In reality, it was failing to load any checkpoints and was throwing an exception to the log, instead defaulting to a single checkpoint at the location (10000, 10000). The reason for this was that there was no checkpoint present in the first room, and the code relies on the first checkpoint being in the first room to construct the checkpoint data structure. It was an easy fix, I simply added a new checkpoint to the checkpoint file. Unfortunately, some of these changes have been processor intensive, and the fast mode that was developed last week has suffered for it. I decreased the speedup from 10x to 4x, but the frame rate still takes a big hit. Strangely, even when fast mode is disabled again, the frame rate stays choppy. I think there is probably a way to get fast mode working better, but it might require a closer look at the rest of the code base and significant optimizations. In the meantime, I think the trade off of speed for data accuracy is worth while. https://youtu.be/dwt76_dVaOw I ran CelesteBot some more, it&#39;s still having trouble making it past the second room. I plan to keep running the bot in the background for the foreseeable future, only time will tell if it can make significant advancements past the first 2 rooms. I also submitted a pull request for all my changes, if you&#39;d like to see the code I&#39;ve been working on all this time it&#39;s available here. For next week, I&#39;ll likely continue running the bot, hunting bugs, optimizing code, and making trivial changes that won&#39;t mess up my existing population data." />
+<meta property="og:description" content="This week I was mainly trying to finalize my changes, fix any remaining critical bugs, and get some machine learning done. I noticed that the player was occasionally still resetting incorrectly. I went through a few different possible solutions, and settled one that appears to be as reliable as possible. When the player dies, the death timer starts. As soon as the timer reaches 0, the player tries to reset the level. If the player doesn&#39;t have control of the character, as is the case when the player is dead or the game is already resetting, the game fails to reset silently. I changed the code so the player would remain motionless after dying, and couldn&#39;t suicide on spikes immediately, which took care of most instances of bad resets. The other bad resets were caused by a strange interaction between the other resetting mechanism. When the player hasn&#39;t made significant progress for 4 or more seconds, the mod resets the level. However, if the player dies within this span of time, it can cause the game to be reset more than once, or not at all. To fix this, I gave the death timer priority over the stuck timer. If the player has died and the death timer is running, the stuck timer will not reset the player. I have seen no instances of bad resets since these changes were made. Another problem I came across was present in the bot vision grid. I hadn&#39;t noticed it before, but entities sometimes weren&#39;t showing up in the grid at all due to the way the caching was done and the way Celeste loads entities. Most entities, including spikes, springs, and moving blocks, are not loaded into the game engine until the player is in the same room. However, the grid was checking for collisions in the next room before the player had entered in some cases and caching it in a grid that never updated, causing the bot to be blind to these entities forever. To fix this, I revamped my caching system slightly. It still caches tile locations permanently, but it caches entity locations once every frame. After that, I came across a silly off by one grid error caused by a difference in real coordinate to tile coordinate translations translations when working with positive and negative numbers. To fix this, I inserted a Math.Floor before casting the coordinate to an int. After these changes, the grid looked great and updated flawlessly for moving entities. My final modification this week related to checkpoints. Previously, I had thought that the machine learning I was doing was using checkpoints in each room. In reality, it was failing to load any checkpoints and was throwing an exception to the log, instead defaulting to a single checkpoint at the location (10000, 10000). The reason for this was that there was no checkpoint present in the first room, and the code relies on the first checkpoint being in the first room to construct the checkpoint data structure. It was an easy fix, I simply added a new checkpoint to the checkpoint file. Unfortunately, some of these changes have been processor intensive, and the fast mode that was developed last week has suffered for it. I decreased the speedup from 10x to 4x, but the frame rate still takes a big hit. Strangely, even when fast mode is disabled again, the frame rate stays choppy. I think there is probably a way to get fast mode working better, but it might require a closer look at the rest of the code base and significant optimizations. In the meantime, I think the trade off of speed for data accuracy is worth while. https://youtu.be/dwt76_dVaOw I ran CelesteBot some more, it&#39;s still having trouble making it past the second room. I plan to keep running the bot in the background for the foreseeable future, only time will tell if it can make significant advancements past the first 2 rooms. I also submitted a pull request for all my changes, if you&#39;d like to see the code I&#39;ve been working on all this time it&#39;s available here. For next week, I&#39;ll likely continue running the bot, hunting bugs, optimizing code, and making trivial changes that won&#39;t mess up my existing population data." />
+<link rel="canonical" href="/2019/03/31/death-timers-and-entity-caching-v2/" />
+<meta property="og:url" content="/2019/03/31/death-timers-and-entity-caching-v2/" />
+<meta property="og:site_name" content="Your awesome title" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-03-31T16:46:07-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Death Timers and Entity Caching v2" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","url":"/2019/03/31/death-timers-and-entity-caching-v2/","dateModified":"2019-03-31T16:46:07-07:00","datePublished":"2019-03-31T16:46:07-07:00","headline":"Death Timers and Entity Caching v2","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/03/31/death-timers-and-entity-caching-v2/"},"description":"This week I was mainly trying to finalize my changes, fix any remaining critical bugs, and get some machine learning done. I noticed that the player was occasionally still resetting incorrectly. I went through a few different possible solutions, and settled one that appears to be as reliable as possible. When the player dies, the death timer starts. As soon as the timer reaches 0, the player tries to reset the level. If the player doesn&#39;t have control of the character, as is the case when the player is dead or the game is already resetting, the game fails to reset silently. I changed the code so the player would remain motionless after dying, and couldn&#39;t suicide on spikes immediately, which took care of most instances of bad resets. The other bad resets were caused by a strange interaction between the other resetting mechanism. When the player hasn&#39;t made significant progress for 4 or more seconds, the mod resets the level. However, if the player dies within this span of time, it can cause the game to be reset more than once, or not at all. To fix this, I gave the death timer priority over the stuck timer. If the player has died and the death timer is running, the stuck timer will not reset the player. I have seen no instances of bad resets since these changes were made. Another problem I came across was present in the bot vision grid. I hadn&#39;t noticed it before, but entities sometimes weren&#39;t showing up in the grid at all due to the way the caching was done and the way Celeste loads entities. Most entities, including spikes, springs, and moving blocks, are not loaded into the game engine until the player is in the same room. However, the grid was checking for collisions in the next room before the player had entered in some cases and caching it in a grid that never updated, causing the bot to be blind to these entities forever. To fix this, I revamped my caching system slightly. It still caches tile locations permanently, but it caches entity locations once every frame. After that, I came across a silly off by one grid error caused by a difference in real coordinate to tile coordinate translations translations when working with positive and negative numbers. To fix this, I inserted a Math.Floor before casting the coordinate to an int. After these changes, the grid looked great and updated flawlessly for moving entities. My final modification this week related to checkpoints. Previously, I had thought that the machine learning I was doing was using checkpoints in each room. In reality, it was failing to load any checkpoints and was throwing an exception to the log, instead defaulting to a single checkpoint at the location (10000, 10000). The reason for this was that there was no checkpoint present in the first room, and the code relies on the first checkpoint being in the first room to construct the checkpoint data structure. It was an easy fix, I simply added a new checkpoint to the checkpoint file. Unfortunately, some of these changes have been processor intensive, and the fast mode that was developed last week has suffered for it. I decreased the speedup from 10x to 4x, but the frame rate still takes a big hit. Strangely, even when fast mode is disabled again, the frame rate stays choppy. I think there is probably a way to get fast mode working better, but it might require a closer look at the rest of the code base and significant optimizations. In the meantime, I think the trade off of speed for data accuracy is worth while. https://youtu.be/dwt76_dVaOw I ran CelesteBot some more, it&#39;s still having trouble making it past the second room. I plan to keep running the bot in the background for the foreseeable future, only time will tell if it can make significant advancements past the first 2 rooms. I also submitted a pull request for all my changes, if you&#39;d like to see the code I&#39;ve been working on all this time it&#39;s available here. For next week, I&#39;ll likely continue running the bot, hunting bugs, optimizing code, and making trivial changes that won&#39;t mess up my existing population data.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Your awesome title" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Your awesome title</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Death Timers and Entity Caching v2</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2019-03-31T16:46:07-07:00" itemprop="datePublished">Mar 31, 2019
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login"=>"bercribe", "email"=>"matoska.polar.waltz@gmail.com", "display_name"=>"mawz", "first_name"=>"", "last_name"=>""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!-- wp:paragraph --></p>
 <p>This week I was mainly trying to finalize my changes, fix any remaining critical bugs, and get some machine learning done.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:paragraph --></p>
@@ -41,9 +76,34 @@ https://youtu.be/dwt76_dVaOw
 <p>I also submitted a pull request for all my changes, if you'd like to see the code I've been working on all this time it's available <a href="https://github.com/sc2ad/CelesteBot/pull/1">here</a>. For next week, I'll likely continue running the bot, hunting bugs, optimizing code, and making trivial changes that won't mess up my existing population data.</p>
 <p><!-- /wp:paragraph --></p>
 
-    </section>
-    <footer>
-      &copy; to me
-    </footer>
-  </body>
+  </div><a class="u-url" href="/2019/03/31/death-timers-and-entity-caching-v2/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Your awesome title</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Your awesome title</li><li><a class="u-email" href="mailto:your-email@example.com">your-email@example.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/jekyll"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">jekyll</span></a></li><li><a href="https://www.twitter.com/jekyllrb"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">jekyllrb</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
 </html>
