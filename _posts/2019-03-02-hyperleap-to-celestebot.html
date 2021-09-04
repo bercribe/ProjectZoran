@@ -47,11 +47,7 @@ permalink: "/2019/03/02/hyperleap-to-celestebot/"
 <p>The second approach I tried was putting a checkpoint at the end of each room. This approach would speed up progress significantly, but would leave less room for interesting decisions from the bot. I also recorded the bot's progress from generation 5 through 20. I found that watching the machine's brain over time was one of the best ways to gain an intuitive understanding of NEAT. This was significantly faster than the previous approach, but was still quite slow. Due to the nature of NEAT, building models from large input sets takes a long time, as the algorithm typically tries randomly adding one link from one input to one output at a time, and running the simulation. Each simulation takes at least 4 seconds to run, since the mod does not reset the player until no significant progress is made for at least 4 seconds. It doesn't sound like a lot, but the time adds up. By generation 20, the bot had only made it to the second room a handful of times. If I could increase the simulation speed of the game, it could be a great help toward training the bot quickly. I believe this is possible, as <a href="https://github.com/ShootMe/CelesteTAS">CelesteTas</a> has a similar feature.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:core-embed/youtube {"url":"https:\/\/youtu.be\/xC7iCYS2NAM","type":"video","providerNameSlug":"youtube","className":"wp-embed-aspect-4-3 wp-has-aspect-ratio"} --></p>
-<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-4-3 wp-has-aspect-ratio">
-<div class="wp-block-embed__wrapper">
-https://youtu.be/xC7iCYS2NAM
-</div>
-</figure>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/xC7iCYS2NAM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <p><!-- /wp:core-embed/youtube --></p>
 <p><!-- wp:paragraph --></p>
 <p>I also noticed the bot couldn't "see" the next platform occasionally, as it was outside its limited vision. By default, the bot can only see a 10 by 10 grid of tiles around itself. Celeste's dash mechanic, however, can traverse this distance almost instantaneously. For the bot to know it needs to dash, it needs to be able to see what is should dash to. To remedy this, I tried running NEAT with a 30 by 30 grid. Unfortunately, this proved to be more than my computer could handle, frame rates were in the single digits. I looked at the source code for building the bot's vision and I believe I can make it more efficient. Being able to run NEAT with more vision could be critical to significant bot improvements.</p>
@@ -66,11 +62,7 @@ https://youtu.be/xC7iCYS2NAM
 <p>The mod creator, sc2ad, was also working on support for another form of machine learning: Q Learning. Q Learning is fundamentally different from NEAT, it is a form of reinforcement learning. It essentially takes in all the same input as NEAT, but then chooses an output state based on what it has seen before or random chance. There is a possible output state for every legal combination of game pad button presses. The algorithm is then rewarded based on it's progress toward a checkpoint. The learning process appears much more chaotic than NEAT, it is somewhat similar to a human randomly mashing buttons at first. After a while it tends to move toward it's goal more, but it randomly backtracks a lot when it shouldn't. It tends to move much faster than NEAT, though, favoring the dash much more than NEAT ever did. I recorded 500 iterations to get an idea of how it compared to NEAT.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:core-embed/youtube {"url":"https:\/\/youtu.be\/4cnLSv7YKAQ","type":"video","providerNameSlug":"youtube","className":"wp-embed-aspect-4-3 wp-has-aspect-ratio"} --></p>
-<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-4-3 wp-has-aspect-ratio">
-<div class="wp-block-embed__wrapper">
-https://youtu.be/4cnLSv7YKAQ
-</div>
-</figure>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4cnLSv7YKAQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <p><!-- /wp:core-embed/youtube --></p>
 <p><!-- wp:paragraph --></p>
 <p>As an unrelated aside, I submitted a <a href="https://github.com/EverestAPI/EverestAPI.github.io/pull/5">pull request</a> to add some method hooking basic information to the <a href="https://everestapi.github.io/">Everest wiki</a>. Hopefully those will get accepted, and will be of some help to future modders.</p>

@@ -65,11 +65,7 @@ permalink: "/2019/03/17/expanding-our-vision/"
 <p>With all these changes in place, I ran NEAT overnight for 200 generations, a process that took about 12 hours. The results were interesting, but mostly unsuccessful. The main problem is that 30x30 = 900, which is a lot of inputs for NEAT to experiment with by iterating through them. It is good for the bot to be able to see this region, but it makes the bot take much longer to learn anything. The other problem was a bug present at 1:49:00. The mod failed to reset the level before running the next organism, resulting in an artificially high fitness for an organism that did not deserve it. NEAT then continued to cling to this type of species for the rest of the simulation, with poor results. I'm still not sure why this occurred, I tested the death timer duration after this simulation and it reset properly every time. If this occurs again, I'll need to do a more thorough investigation.</p>
 <p><!-- /wp:paragraph --></p>
 <p><!-- wp:core-embed/youtube {"url":"https:\/\/youtu.be\/aVTlBXTexzM","type":"video","providerNameSlug":"youtube","className":"wp-embed-aspect-4-3 wp-has-aspect-ratio"} --></p>
-<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-4-3 wp-has-aspect-ratio">
-<div class="wp-block-embed__wrapper">
-https://youtu.be/aVTlBXTexzM
-</div>
-</figure>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/aVTlBXTexzM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <p><!-- /wp:core-embed/youtube --></p>
 <p><!-- wp:paragraph --></p>
 <p>Now that the expanded vision is in place, it's time to think about how to get as much training time as possible for the bot. I would like to investigate methods of speeding up Celeste's physics. Another useful feature would be the ability to save and load the genome data so that sessions can be carried over between game launches. These will be the main focus of next week's work.</p>
