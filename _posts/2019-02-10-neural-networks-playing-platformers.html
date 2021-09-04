@@ -1,0 +1,35 @@
+---
+layout: post
+title: Neural networks playing platformers
+date: 2019-02-10 19:48:27.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_pending: '1'
+  _import_session_id: 5dfd1e317d041
+  _import_original_post_id: '24'
+  original_post_id: '24'
+  _wp_old_slug: '24'
+  _elasticsearch_indexed_on: '2019-02-11 00:48:27'
+author:
+  login: bercribe
+  email: matoska.polar.waltz@gmail.com
+  display_name: mawz
+  first_name: ''
+  last_name: ''
+permalink: "/2019/02/10/neural-networks-playing-platformers/"
+---
+<p><!-- wp:paragraph --></p>
+<p>I decided a good place to start would be the <a href="https://www.youtube.com/watch?v=qv6UVOQ0F44">MarI/O</a> source code. MarI/O is designed to work with the <a href="http://tasvideos.org/BizHawk.html">BizHawk emulator</a>. This emulator is designed with TASBots in mind, it allows the saving and loading of save states and execution of LUA scripts. MarI/O is essentially a huge LUA script. It works on the assumption that it is always beneficial for Mario to move towards the right side of the screen, and uses a Fitness metric calculated with this assumption in mind. It uses this metric to judge the success of neural networks generated via the <a href="http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf">NEAT</a> method. The system iteratively tests these networks by having them play Mario. It then combines successful networks and eliminates unsuccessful ones. This is a gross oversimplification of the process, the system requires hundreds, if not thousands of repetitions to yield much success.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>To test my understanding of the system, I attempted a modification of MarI/O that would allow it to play Castlevania instead. MarI/O fetches Mario's location, tile information, and enemy information by reading the RAM of the executing ROM. I had to modify this to fetch Simon's location and the location of enemies. I was unable to make a direct translation from Mario's tile reading method to Castlevania's, so I left this element out of the equation. I then allowed the system to run over and over again. By generation 8, the bot was able to make it to the second room sometimes. At this point, I realized that the Fitness metric used by Mario was too simple for Castlevania since the rightmost side of the screen is not the end of the second room, the player must instead descend the stairs into the basement. I also discovered that Simon's position wasn't being tracked globally, it was only being tracked per room. Thus, the Fitness metric stopped counting after the first room. If repeated with these fixes, this experiment could probably get better results. The earliest effective strategy for the bot was a stutter step, involving using the whip every second or so and walking to the right. The bot made it to the end of the first room before being reset. In later generations, the most effective strategy was to jump over ghosts and damage boost past them. More detailed data about the Castlevania training can be found <a href="https://pastebin.com/16pqaUMK">here</a>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I also began preparing to apply the NEAT system to a more recent game - <a href="http://www.celestegame.com/">Celeste</a>. Celeste has a large speed running and modding scene, it also features complex mechanics and entirely deterministic gameplay. These features make it an excellent candidate for NEAT. I installed <a href="https://everestapi.github.io/">Everest</a>, a Celeste mod loader and modding API. By opening the game and enabling debug mode, I discovered that the necessary components for NEAT were made readily available by Everest: the player's position, the level tiles, and special entities like spikes and springs. The stages were even labeled in numerically increasing order from the start to the end of the level. This should make it possible to either develop a mod that performs NEAT in a self contained format, or develop a mod that supplies entity information for use in a 3rd party program running NEAT. I'll have to experiment a lot with Fitness metrics. One option is to track the distance the player is from the end of the level at any given time. Another possibility involves tracking the distance the player is from the next stage toward the end of the level. This would require more work initially, but might yield faster results. I'm excited to start applying NEAT to Celeste in the near future.</p>
+<p><!-- /wp:paragraph --></p>

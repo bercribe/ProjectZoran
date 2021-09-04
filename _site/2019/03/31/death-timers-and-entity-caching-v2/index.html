@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Death Timers and Entity Caching v2</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+    </nav>
+    <h1>Death Timers and Entity Caching v2</h1>
+    <section>
+      <p><!-- wp:paragraph --></p>
+<p>This week I was mainly trying to finalize my changes, fix any remaining critical bugs, and get some machine learning done.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I noticed that the player was occasionally still resetting incorrectly. I went through a few different possible solutions, and settled one that appears to be as reliable as possible. When the player dies, the death timer starts. As soon as the timer reaches 0, the player tries to reset the level. If the player doesn't have control of the character, as is the case when the player is dead or the game is already resetting, the game fails to reset silently. I changed the code so the player would remain motionless after dying, and couldn't suicide on spikes immediately, which took care of most instances of bad resets. The other bad resets were caused by a strange interaction between the other resetting mechanism. When the player hasn't made significant progress for 4 or more seconds, the mod resets the level. However, if the player dies within this span of time, it can cause the game to be reset more than once, or not at all. To fix this, I gave the death timer priority over the stuck timer. If the player has died and the death timer is running, the stuck timer will not reset the player. I have seen no instances of bad resets since these changes were made.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Another problem I came across was present in the bot vision grid. I hadn't noticed it before, but entities sometimes weren't showing up in the grid at all due to the way the caching was done and the way Celeste loads entities. Most entities, including spikes, springs, and moving blocks, are not loaded into the game engine until the player is in the same room. However, the grid was checking for collisions in the next room before the player had entered in some cases and caching it in a grid that never updated, causing the bot to be blind to these entities forever. To fix this, I revamped my caching system slightly. It still caches tile locations permanently, but it caches entity locations once every frame. After that, I came across a silly off by one grid error caused by a difference in real coordinate to tile coordinate translations translations when working with positive and negative numbers. To fix this, I inserted a Math.Floor before casting the coordinate to an int. After these changes, the grid looked great and updated flawlessly for moving entities.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>My final modification this week related to checkpoints. Previously, I had thought that the machine learning I was doing was using checkpoints in each room. In reality, it was failing to load any checkpoints and was throwing an exception to the log, instead defaulting to a single checkpoint at the location (10000, 10000). The reason for this was that there was no checkpoint present in the first room, and the code relies on the first checkpoint being in the first room to construct the checkpoint data structure. It was an easy fix, I simply added a new checkpoint to the checkpoint file.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Unfortunately, some of these changes have been processor intensive, and the fast mode that was developed last week has suffered for it. I decreased the speedup from 10x to 4x, but the frame rate still takes a big hit. Strangely, even when fast mode is disabled again, the frame rate stays choppy. I think there is probably a way to get fast mode working better, but it might require a closer look at the rest of the code base and significant optimizations. In the meantime, I think the trade off of speed for data accuracy is worth while. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:core-embed/youtube {"url":"https:\/\/youtu.be\/dwt76_dVaOw","type":"video","providerNameSlug":"youtube","className":"wp-embed-aspect-4-3 wp-has-aspect-ratio wp-embed-aspect-16-9"} --></p>
+<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-4-3 wp-has-aspect-ratio wp-embed-aspect-16-9">
+<div class="wp-block-embed__wrapper">
+https://youtu.be/dwt76_dVaOw
+</div>
+</figure>
+<p><!-- /wp:core-embed/youtube --></p>
+<p><!-- wp:paragraph --></p>
+<p>I ran CelesteBot some more, it's still having trouble making it past the second room. I plan to keep running the bot in the background for the foreseeable future, only time will tell if it can make significant advancements past the first 2 rooms.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I also submitted a pull request for all my changes, if you'd like to see the code I've been working on all this time it's available <a href="https://github.com/sc2ad/CelesteBot/pull/1">here</a>. For next week, I'll likely continue running the bot, hunting bugs, optimizing code, and making trivial changes that won't mess up my existing population data.</p>
+<p><!-- /wp:paragraph --></p>
+
+    </section>
+    <footer>
+      &copy; to me
+    </footer>
+  </body>
+</html>

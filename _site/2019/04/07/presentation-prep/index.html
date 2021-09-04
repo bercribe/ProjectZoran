@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Presentation Prep</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+    </nav>
+    <h1>Presentation Prep</h1>
+    <section>
+      <p><!-- wp:paragraph --></p>
+<p>This week, I wanted to get fast mode working again and set up some differentiation in game entities for CelesteBot's vision.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Getting fast mode working again required some optimizations. I was able to identify the resource hog fairly quickly, it was the entity caching function that was run every frame. The function was wiping the cache manually and building it again every frame, which was slowing everything down. I changed it slightly so that instead of clearing the cache, it simply allocated new memory and used that, discarding the old memory. This helped significantly, but fast mode was still choppy at high speeds.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I decided it was time for some user facing settings. sc2ad had requested some settings for specifying the cache size, so I implemented those first. In addition, created a setting for specifying how fast the fast mode should be, as an integer multiplier of real time speed. Realizing that entities in Celeste don't move fast enough to necessitate updates every frame, I also included a setting specifying how many frames to wait before updating the entity cache. The default is 10 frames, which is equivalent to 0.167 seconds. This change seems to work fine, and makes fast mode work great at 10x speed once more.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Lastly, I expanded the number of unique entities the bot would recognize through its vision to about 16. Everything present in 1A was covered, and I made it almost trivial to add new entities in the future. When the bot encounters entities that are uncategorized, it prints a message to the console specifying which entity to add and which enumerator to add it to. This should help when someone wants to run the bot on 2A in the future, for example. I made another pull request with my changes, the pull request is available <a href="https://github.com/sc2ad/CelesteBot/pull/2">here</a>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Again, I ran the bot for a while with my changes in place. It got to generation 1,200 in the span of 20 hours, which is equivalent to 36,000 attempts. The population data file for generation 1,200 was 894 MB. It still didn't make it past room 3, but it progressed a lot faster than before.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The rest of my work this week relates to the <a href="https://mdp.engin.umich.edu/design-expo/">UMich Design Expo</a>, at which I will present my findings with CelesteBot. I will have a poster with some of my key findings, and a computer running CelesteBot training live. I put together a draft of my poster, it is visible below.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":70} --></p>
+<figure class="wp-block-image"><img src="/assets/2019/04/c4d78-project-zoran.jpg" alt="" class="wp-image-70" /></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:file {"id":69,"href":"http:\/\/www.projectzoran.com\/wp-content\/uploads\/2019\/04\/Project-Zoran.pdf"} --></p>
+<div class="wp-block-file"><a href="https://bercribehome.wpcomstaging.com/wp-content/uploads/2019/12/9577f-project-zoran.pdf">Project Zoran</a><a href="http://www.projectzoran.com/wp-content/uploads/2019/04/Project-Zoran.pdf" class="wp-block-file__button" download>Download</a></div>
+<p><!-- /wp:file --></p>
+<p><!-- wp:paragraph --></p>
+<p>Short post this week, but that's about all that happened. Next week I'll be finalizing my poster and making any last minute changes needed for CelesteBot.</p>
+<p><!-- /wp:paragraph --></p>
+
+    </section>
+    <footer>
+      &copy; to me
+    </footer>
+  </body>
+</html>

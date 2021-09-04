@@ -1,0 +1,84 @@
+---
+layout: post
+title: HyperLeap to CelesteBot
+date: 2019-03-02 17:13:57.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_pending: '1'
+  _import_session_id: 5dfd1e317d041
+  _import_original_post_id: '51'
+  _elasticsearch_indexed_on: '2019-03-02 22:13:57'
+author:
+  login: bercribe
+  email: matoska.polar.waltz@gmail.com
+  display_name: mawz
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/02/hyperleap-to-celestebot/"
+---
+<p><!-- wp:paragraph --></p>
+<p>I made a massive leap in progress this week due to the magic of social networking. Through connections on the <a href="https://discord.gg/6qjaePQ">Mt. Celeste Climbing Association Discord</a>, I was referred to sc2ad and his project: <a href="https://www.youtube.com/watch?v=mGykjbUxj6I">CelesteBot</a>. This project has been in progress for months, and much of the work I was trying to accomplish is already done and available in the <a href="https://github.com/sc2ad/CelesteBot/tree/qlearning">CelesteBot GitHub repo</a>. There's not much in the way of documentation, but by examining the source code and talking to sc2ad, I've been able to start understanding the mod and performing tests with it.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In essence, CelesteBot is an application of NEAT machine learning. It is vision based, it simplifies the region near the player into a grid of colliding tiles and entities. It uses this as input, along with some other parameters like player position, velocity, player stamina, and a Boolean representing whether the player can dash. These inputs are mapped to outputs on the game pad representing in game controls: up, down, left, right, jump, dash, and grab. These controls are then executed in game. This whole process occurs once every frame. The bot's effectiveness is determined through a performance metric, it is based on distance toward the next checkpoint. Multiple checkpoints can be tracked sequentially, thus a route through a map can be pre-planned for the bot.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The mod has a lot of user facing settings that can be modified to subtly change the nature of the machine learning algorithm. These include vision size, along with many NEAT specific settings like "Add Connection Chance" and "Add Node Chance". The mod also includes several keyboard controls. The most important of these are as follows:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>A - Fitness Append Mode. Allows the user to specify checkpoints for the performance metric.
+<ul>
+<li>Space - Append Fitness Marker</li>
+</ul>
+</li>
+<li> - Begin Learning. Starts the machine learning process.</li>
+<li>, - Stop Learning. Also resets the player. Species data is still held within memory.</li>
+<li>N - Hide mod overlay. Allows the game itself to be viewed without the additional clutter. Also improves frame rate, rendering the mod overlay is performance heavy.</li>
+<li>Shift+N - Show mod overlay. Shows relevant mod information, including a visual representation of the machine's brain, the performance metric, and the performance progress over time. The machine's brain shows a mapping of the machine's "vision" to game controls via nodes and connections.</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>At first, I was interested in seeing whether NEAT would be able to make progress given only one checkpoint placed at the end of the level. This approach would not give a perfect model for each room, but if the bot moved toward it over time, it would end up working. I found that this approach was extremely slow, after 10 generations the bot still had not made significant progress toward exiting the first room.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The second approach I tried was putting a checkpoint at the end of each room. This approach would speed up progress significantly, but would leave less room for interesting decisions from the bot. I also recorded the bot's progress from generation 5 through 20. I found that watching the machine's brain over time was one of the best ways to gain an intuitive understanding of NEAT. This was significantly faster than the previous approach, but was still quite slow. Due to the nature of NEAT, building models from large input sets takes a long time, as the algorithm typically tries randomly adding one link from one input to one output at a time, and running the simulation. Each simulation takes at least 4 seconds to run, since the mod does not reset the player until no significant progress is made for at least 4 seconds. It doesn't sound like a lot, but the time adds up. By generation 20, the bot had only made it to the second room a handful of times. If I could increase the simulation speed of the game, it could be a great help toward training the bot quickly. I believe this is possible, as <a href="https://github.com/ShootMe/CelesteTAS">CelesteTas</a> has a similar feature.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:core-embed/youtube {"url":"https:\/\/youtu.be\/xC7iCYS2NAM","type":"video","providerNameSlug":"youtube","className":"wp-embed-aspect-4-3 wp-has-aspect-ratio"} --></p>
+<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-4-3 wp-has-aspect-ratio">
+<div class="wp-block-embed__wrapper">
+https://youtu.be/xC7iCYS2NAM
+</div>
+</figure>
+<p><!-- /wp:core-embed/youtube --></p>
+<p><!-- wp:paragraph --></p>
+<p>I also noticed the bot couldn't "see" the next platform occasionally, as it was outside its limited vision. By default, the bot can only see a 10 by 10 grid of tiles around itself. Celeste's dash mechanic, however, can traverse this distance almost instantaneously. For the bot to know it needs to dash, it needs to be able to see what is should dash to. To remedy this, I tried running NEAT with a 30 by 30 grid. Unfortunately, this proved to be more than my computer could handle, frame rates were in the single digits. I looked at the source code for building the bot's vision and I believe I can make it more efficient. Being able to run NEAT with more vision could be critical to significant bot improvements.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I also discovered a couple bugs and some needed improvements in the fundamental processes of the mod. When the player dies, the mod is supposed to wait until the death animation is complete and then reset the player to the beginning of the map. However, if the player dies again before the reset is triggered, the reset is unable to trigger as the death animation takes priority. I examined the code in question, the death animation wait is a simple stopwatch set to 2.5 seconds. I think this timing is just a tad too generous, I will need to experiment with smaller timings later to try to fix this. It isn't a huge bug, but it occasionally ruins a simulation for a particular organism.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The other bug relates directly to the vision of the bot. The bot vision appears inconsistent from the hit boxes surrounding it. This ends up being critical at the end of the first room, where there is a single block that the bot can't see sticking out of a wall. The bot ends up walking to the wall and getting stuck under the block, followed by a reset. For the bot to be able to account for the block, it needs to be able to see it.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The mod creator, sc2ad, was also working on support for another form of machine learning: Q Learning. Q Learning is fundamentally different from NEAT, it is a form of reinforcement learning. It essentially takes in all the same input as NEAT, but then chooses an output state based on what it has seen before or random chance. There is a possible output state for every legal combination of game pad button presses. The algorithm is then rewarded based on it's progress toward a checkpoint. The learning process appears much more chaotic than NEAT, it is somewhat similar to a human randomly mashing buttons at first. After a while it tends to move toward it's goal more, but it randomly backtracks a lot when it shouldn't. It tends to move much faster than NEAT, though, favoring the dash much more than NEAT ever did. I recorded 500 iterations to get an idea of how it compared to NEAT.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:core-embed/youtube {"url":"https:\/\/youtu.be\/4cnLSv7YKAQ","type":"video","providerNameSlug":"youtube","className":"wp-embed-aspect-4-3 wp-has-aspect-ratio"} --></p>
+<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-4-3 wp-has-aspect-ratio">
+<div class="wp-block-embed__wrapper">
+https://youtu.be/4cnLSv7YKAQ
+</div>
+</figure>
+<p><!-- /wp:core-embed/youtube --></p>
+<p><!-- wp:paragraph --></p>
+<p>As an unrelated aside, I submitted a <a href="https://github.com/EverestAPI/EverestAPI.github.io/pull/5">pull request</a> to add some method hooking basic information to the <a href="https://everestapi.github.io/">Everest wiki</a>. Hopefully those will get accepted, and will be of some help to future modders.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Next week's goals include: fixing CelesteBot's vision inconsistencies, fixing CelesteBot's death timer, and improving CelesteBot's vision generation performance. I may also look into increasing Celeste's simulation speed and investigate other machine learning methods.</p>
+<p><!-- /wp:paragraph --></p>

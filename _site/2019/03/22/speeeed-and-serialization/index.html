@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Speeeed (and Serialization)</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+    </nav>
+    <h1>Speeeed (and Serialization)</h1>
+    <section>
+      <p><!-- wp:paragraph --></p>
+<p>This week my objectives were to speed up the machine learning process, and to develop a method for saving and loading CelesteBot brain data between sessions. I was able to accomplish both goals.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Speeding up the game ended up being trivially easy. All that was necessary was to call the call the original Engine Update function multiple times from within the hooked Engine Update function. I decided to call Update 10 times a function call, resulting in a 10x speedup in the game. I also added a keybinding to control the speedup - F engages fast mode and Shift+F disengages it.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The second task was harder to complete. The original developer sc2ad already had some logic in place to serialize and deserialize the Population (the data structure containing all NEAT specific data). It used the C# BinaryFormatter, and saved a copy of the population to a file every 3 generations by default. It also allowed the user to load a previous generation with the ' key. Unfortunately, this logic was incomplete and produced files that were identical every time. These files could not be loaded and were effectively useless.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>My first step was to fix the original logic by adding the [Serializable] tag to the Population class and all it's necessary sub classes. This change alone resulted in checkpoint files that differed from each other. It was not enough to be able to load generations between sessions, though. The BinaryFormatter produces serialized classes that are meant to be used in the same program, it doesn't save enough data to reconstruct a class across different sessions or programs. To do something like that, we need to serialize to an XML or JSON.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The next option I tried was the XmlSerializer. This fully serializes a class to an XML file, and can deserialize from that file in another program. Unfortunately, it is rather limited by its implementation method, as I discovered while trying to use it. It uses reflection to deserialize data, meaning it needs a parameterless constructor which it calls, followed by assigning public variables to their values. This by itself is OK, I was able to get around this requirement by creating empty parameterless constructors wherever required. I was also able to ignore variables for which creating a parameterless constructor was impossible, like the Celeste Player. The main deal breaker was it's inability to serialize dictionaries. That, and it's inability to handle circular references.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I moved on to DataContractJsonSerializer. This class functions a little differently from XmlSerializer. Instead of the [Serializable] tag, it uses [DataContract] for classes. Any variables you want serialized also have to be tagged with the [DataMember] tag. For nested classes, it's usually necessary to specify known classes to be serialized and deserialized. My KnownTypes include CelestePlayer, ConnectionHistory, GeneConnection, Genome, Node, Population, and Species. After that, it's a simple matter of using the serializer to save and load data to and from a file. I initially got errors because JsonSerializer is also unable to handle circular references. To fix this, I simply switched to the DataContractSerializer, and added (IsReference = true) to my [DataContract] tags. Suddenly, saving and loading populations worked perfectly!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>These files also happen to be rather large. Checkpoint 0 was 13 MB, but by Checkpoint 300, the file size had grown to 34 MB. My folder containing checkpoints every 3 generations up to generation 675 is 6.83 GB. I will likely decrease the frequency of check pointing for future tests.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:core-embed/youtube {"url":"https:\/\/youtu.be\/ygrkibDWOro","type":"video","providerNameSlug":"youtube","className":"wp-embed-aspect-4-3 wp-has-aspect-ratio"} --></p>
+<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-4-3 wp-has-aspect-ratio">
+<div class="wp-block-embed__wrapper">
+https://youtu.be/ygrkibDWOro
+</div>
+</figure>
+<p><!-- /wp:core-embed/youtube --></p>
+<p><!-- wp:paragraph --></p>
+<p>I ran CelesteBot for an extended duration again. Again, I ran into the issue mentioned last week, this time 11 minutes in. As a reminder, the mod didn't reset the player to the beginning of the level correctly, so one species had an artificially high fitness. This currently appears to be the biggest barrier to the bot performing well. I will need to investigate methods of resetting the player without relying on a death timer, as the death timer has proven to be unreliable. This is my main goal for next week, along with fixing any minor bugs I come across. After that, I'd like to run the bot for an extended duration and see if it can beat level 1A. This is getting exciting, I'm so close to achieving something significant!</p>
+<p><!-- /wp:paragraph --></p>
+
+    </section>
+    <footer>
+      &copy; to me
+    </footer>
+  </body>
+</html>
