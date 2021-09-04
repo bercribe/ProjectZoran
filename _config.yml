@@ -28,7 +28,7 @@ twitter_username: bercribe
 github_username:  bercribe
 
 # Build settings
-theme: jekyll-theme-cayman
+theme: minima
 plugins:
   - jekyll-feed
 
