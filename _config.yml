@@ -21,11 +21,12 @@
 title: Project Zoran
 email: mwwaltz@umich.edu
 description: >- # this means to ignore newlines until "baseurl:"
-  Development blog for a speed running research project. See my other work at https://matoskawaltz.com
+  Development blog for a speed running research project.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://projectzoran.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: bercribe
 github_username:  bercribe
+portfolio: https://matoskawaltz.com
 
 # Build settings
 theme: minima
