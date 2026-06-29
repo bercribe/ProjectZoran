@@ -1,0 +1,30 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Project Zoran</h1>
+			<p>
+				Development blog for a speed running research project. This project explores using
+				machine learning to generate
+				<a href="https://www.youtube.com/watch?v=BEcv7BD1q9o">Tool Assisted Speedrun (TAS) Bots</a>
+				for video games, with a focus on <a href="http://www.celestegame.com/">Celeste</a>.
+			</p>
+			<p>
+				Read the <a href="/blog">blog posts</a> to follow the journey, or check out the
+				<a href="/about">statement of purpose</a> for more background.
+			</p>
+		</main>
+		<Footer />
+	</body>
+</html>
