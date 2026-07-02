@@ -60,11 +60,7 @@ const posts = (await getCollection("blog")).sort(
             }
             @media (max-width: 720px) {
                 ul {
-                    gap: 0.5em;
-                }
-                ul li {
-                    width: 100%;
-                    text-align: center;
+                    columns: 1;
                 }
             }
         </style>
